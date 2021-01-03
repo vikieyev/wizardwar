@@ -1,0 +1,262 @@
+<!doctype html> 
+<html lang="en"> 
+<head> 
+    <meta charset="UTF-8" />
+    <title>WIZARD WAR</title>
+    <script src="lib/phaser.js"></script>
+    <style type="text/css">
+        body {
+            margin: 0;
+            background: #B4D9E7; 
+        }
+    </style>
+</head>
+<body>
+
+<script type="text/javascript">
+
+    var config = {
+        //type: Phaser.CANVAS,
+        type: Phaser.AUTO,
+        width: 800,
+        height: 480,
+        physics: {
+        default: 'arcade',
+        arcade: {
+            //gravity: { y: 300 },
+            debug: false
+        }
+    },
+        scene: {
+            preload: preload,
+            create: create,
+            update: update
+        }
+    };
+
+    var game = new Phaser.Game(config);
+	var wizard;
+	var cursors ;
+	var keys ;
+	var bomb ;
+	var bombs ;
+	var fire = false;
+	var enemies;
+	var enemy;
+	var town_ashton_1;
+	var town_ashton_2;
+	var platforms;
+
+    function preload ()
+    {
+        this.load.image('sky', 'assets/sky.png');
+		this.load.image('town_ashton_2', 'assets/town_a1.png');
+        this.load.image('bomb', 'assets/bomb.png');
+        this.load.spritesheet('dude', 'assets/dude.png', { frameWidth: 32, frameHeight: 48 });
+        this.load.spritesheet('wizard', 'assets/wizard-161x106.png', { frameWidth: 161, frameHeight: 106 });
+		this.load.spritesheet('m_boar', 'assets/m_boar-239x178.png', { frameWidth: 239, frameHeight: 178 });
+		this.load.image('ground', 'assets/platform.png');
+    }
+
+    function create ()
+    {
+		
+        town_ashton_1 = this.add.image(400, 300, 'skyt');
+        //platforms.create(50, 250, 'ground');
+		//town_ashton_2 = this.add.image(400, 300, 'town_ashton_2');
+        player = this.physics.add.sprite(200,300,'wizard');
+		player.setScale(0.25);
+        //player.setCollideWorldBounds(true);
+        cursors = this.input.keyboard.createCursorKeys();
+        keys = this.input.keyboard.addKeys('Z');
+        
+		bombs = this.physics.add.group();
+		enemies = this.physics.add.group();
+		
+		this.physics.add.overlap(bombs, enemies, BombHitEnemies, null, this);
+        
+    }
+    
+    var fire_time = 0;
+    var facingUp = false;
+    var facingDown = false;
+    var facingLeft = false;
+    var facingRight = false;
+    var enemySpawn = 0;
+	var map = "town_ashton_1";
+
+    function update ()
+    {
+		
+		enemySpawn = Phaser.Math.Between(0, 800);
+		if(enemySpawn % 100 == 0)
+		{
+				enemy = enemies.create(Phaser.Math.Between(0, 800), -10, 'm_boar');
+			    enemy.setVelocity(Phaser.Math.Between(-200, 200),Phaser.Math.Between(50, 200));
+				enemy.setScale(0.25);
+				this.anims.create
+				({
+					key: 'play',
+					frames: this.anims.generateFrameNumbers('m_boar', { start: 0, end: 34 }),
+					frameRate: 10,
+					repeat: -1
+				});
+				enemy.anims.play('play', true);
+		}
+		
+		///map change///
+			if(map == "town_ashton_1")
+			{
+				if(player.x > 800)
+				{
+					town_ashton_1.destroy();
+					clearEnemies();
+					player.x = 0;
+					map = "town_ashton_2"
+					town_ashton_2 = this.add.image(400, 300, 'town_ashton_2');
+					//platforms.create(50, 250, 'ground');
+					
+				}
+				
+			}
+			if(map == "town_ashton_2")
+			{
+				if(player.x < -1)
+				{
+					town_ashton_2.destroy();
+					clearEnemies();
+					player.x = 800;
+					map = "town_ashton_1";
+					town_ashton_1 = this.add.image(400, 300, 'sky');
+					
+				}
+				
+			}
+			
+			
+		///player selalu nampak///		
+		player.depth = 1;
+		
+		if (cursors.left.isDown)
+		{
+			player.x -= 3;
+			facingLeft = true;
+			facingRight = false;
+			facingUp = false;
+			facingDown =false;
+			
+		}
+		else if (cursors.right.isDown)
+		{
+			player.x += 3;
+			facingLeft = false;
+			facingRight = true;
+			facingUp = false;
+			facingDown =false;
+
+		}
+		else if (cursors.up.isDown)
+		{
+			player.y -= 3;
+			facingLeft = false;
+			facingRight = false;
+			facingUp = true;
+			facingDown = false;
+		}
+		else if (cursors.down.isDown)
+		{
+			player.y += 3;
+			facingLeft = false;
+			facingRight = false;
+			facingUp = false;
+			facingDown =true;
+		}
+		else
+		{
+			
+		}
+		
+		if(keys.Z.isDown)
+		{
+			fire_time++
+			if(fire_time > 60)
+			{
+				fire = true;
+				fire_time=0;
+			}
+		}
+		
+		
+		if(fire == true)
+		{
+			if (facingUp == true)
+			{
+				bomb = bombs.create(player.x, player.y, 'bomb');
+			    bomb.setVelocity(0,-100);
+			}
+			if (facingDown == true)
+			{
+				bomb = bombs.create(player.x, player.y, 'bomb');
+			    bomb.setVelocity(0, 100);
+			}
+			if (facingLeft == true)
+			{
+				bomb = bombs.create(player.x, player.y, 'bomb');
+			    bomb.setVelocity(-100, 0);
+			}
+			if (facingRight == true)
+			{
+				bomb = bombs.create(player.x, player.y, 'bomb');
+			    bomb.setVelocity(100, 0);
+			}
+			 
+			 fire = false;
+		}
+		
+		
+		 bombs.children.iterate(function (child) 
+		 {
+
+            if(child.y < 0)
+			{
+				child.disableBody(true, true);
+			}
+			
+
+        });
+        
+        enemies.children.iterate(function (child) 
+        {
+
+            if(child.y > 480)
+			{
+				//child.disableBody(true, true);
+				 child.body.velocity.y *= -1;
+			}
+			
+
+        });
+		
+    }
+    
+    function BombHitEnemies(bomb,enemy)
+    {
+		bomb.disableBody(true, true);
+		enemy.disableBody(true, true);
+	}
+	
+	function clearEnemies()
+	{
+		enemies.children.iterate(function (child) 
+        {
+
+			child.disableBody(true, true);
+		
+        });
+	}
+    
+
+</script>
+
+</body>
+</html>
