@@ -38,6 +38,7 @@ var config = {
 	var key_enter;
 	var key_space;
 	var this_create;
+	var wall;
 	var walls;
 	//speed//
 	var speedx = 0;
@@ -109,20 +110,28 @@ var config = {
 		
 
 		town_ashton_1 = this_create.add.image(400, 300, 'sky');
-		walls = this_create.physics.add.staticGroup();
+		//wall = this_create.physics.add.staticGroup();
 		//town_ashton_2 = this.add.image(400, 300, 'town_ashton_2');
-		walls.create(300, 400, 'wall');
+		//wall.create(300, 400, 'wall');
+		walls = this_create.physics.add.staticGroup();
+		//walls = this_create.physics.add.group();
+		walls.create(300,400,'wall');
+		
         player = this_create.physics.add.sprite(200,300,'wizard');
 		player.setScale(0.25);
-        player.setCollideWorldBounds(true);
+        //player.setCollideWorldBounds(true);
 		bombs = this_create.physics.add.group();
 		enemies = this_create.physics.add.group();
+		
+
+		
+		//walls.create(300,400,'wall');
+
 		style = { font: "12px Arial", fill: "#ff0044", wordWrap: true, align: "center", backgroundColor: "#ffff00" };
 		// text = this_create.add.text(player.x,player.y,map,style);
-		text_hp = this_create.add.text(50,50,player_hp,style);
+		text_hp = this_create.add.text(50,50,player_hp + " " + map ,style);
 
 		//  Collide the player and the wall
-
     	this_create.physics.add.collider(player, walls);
 
     	//this_create.physics.add.overlap(player, walls, PlayerHitWall, null, this_create);
@@ -231,7 +240,7 @@ var config = {
 			start_menu(this_create);
 		}
 		else if(game_state == "play"){
-			text_hp.setText("HP : " + player_hp);
+			text_hp.setText("HP : " + player_hp + "| map = " + map);
 
 			
 
@@ -259,6 +268,7 @@ var config = {
 					if(player.x > 800)
 					{
 						town_ashton_1.destroy();
+						clearWalls();
 						clearEnemies();
 						player.x = 0;
 						map = "town_ashton_2"
@@ -266,7 +276,6 @@ var config = {
 						town_ashton_2_create(this_create);
 						
 					}
-					;
 					if(player.x < 1){
 						player.x = 1;
 					}
@@ -308,7 +317,7 @@ var config = {
 			if (cursors.left.isDown)
 			{
 				
-				console.log("accel = " + accel + " speedx = " + speedx + " speedy = " + speedy );
+				//console.log("accel = " + accel + " speedx = " + speedx + " speedy = " + speedy );
 				if(speedx < top_speed){
 					speedx += accel;
 				}
@@ -321,7 +330,7 @@ var config = {
 			}
 			else if (cursors.right.isDown)
 			{
-				console.log("accel = " + accel + " speedx = " + speedx + " speedy = " + speedy );
+				//console.log("accel = " + accel + " speedx = " + speedx + " speedy = " + speedy );
 				if(speedx < top_speed){
 					speedx += accel;
 				}
@@ -334,7 +343,7 @@ var config = {
 			}
 			else if (cursors.up.isDown)
 			{
-				console.log("accel = " + accel + " speedx = " + speedx + " speedy = " + speedy );
+				//console.log("accel = " + accel + " speedx = " + speedx + " speedy = " + speedy );
 				if(speedy < top_speed){
 					speedy += accel;
 				}
@@ -346,7 +355,7 @@ var config = {
 			}
 			else if (cursors.down.isDown)
 			{
-				console.log("accel = " + accel + " speedx = " + speedx + " speedy = " + speedy );
+				//console.log("accel = " + accel + " speedx = " + speedx + " speedy = " + speedy );
 				if(speedy < top_speed){
 					speedy += accel;
 				}
@@ -452,6 +461,10 @@ var config = {
 			
 		
     }
+
+    function clear_town_ashton_1(){
+
+    }
     
     function BombHitEnemies(bomb,enemy)
     {
@@ -461,16 +474,18 @@ var config = {
 
 	function PlayerHitWall(player,walls)
     {
+		console.log("hit wall");
 		player_hp = 99;
-		if(speedy > 0){
-			//player.y -= top_speed;
-		}
-		if(speedy < 0 ){
-			//player.y -= top_speed;
-		}
-		speedx = -2;
-		speedy = -2;
-		//accel = 0;
+		
+	}
+
+	function clearWalls(){
+		walls.children.iterate(function (child) 
+        {
+
+			child.disableBody(true, true);
+		
+        });
 	}
 
 	function EnemiesHitPlayer(player,enemy)
