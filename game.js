@@ -173,6 +173,7 @@ var config = {
 			child.setScale(0.25);
 			child.anims.play('play_reptile', true);
 			child.setBounceY(Phaser.Math.FloatBetween(0.4, 0.8));
+			
 			if(child.x < player.x){
 				child.x += 1 ;
 			}else if(child.x > player.x){
