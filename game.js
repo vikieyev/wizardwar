@@ -115,7 +115,7 @@ var config = {
 		//wall.create(300, 400, 'wall');
 		walls = this_create.physics.add.staticGroup();
 		//walls = this_create.physics.add.group();
-		walls.create(300,400,'wall');
+		//walls.create(300,400,'wall');
 		
         player = this_create.physics.add.sprite(200,300,'wizard');
 		player.setScale(0.25);
@@ -142,6 +142,7 @@ var config = {
 	}
 
 	function town_ashton_2_create(this_create){
+		//enemies = [];
 		var enemy_reptile = enemies.create(500, 100, 'reptile'); 
 		enemies.create(100,500,'reptile');
 		game.anims.create
@@ -155,7 +156,9 @@ var config = {
 	}
 
 	function town_ashton_1_create(this_create){
-		var enemy_reptile = enemies.create(500, 100, 'm_boar'); 
+		//enemies = [];
+		var enemy_reptile = enemies.create(500, 100, 'm_boar');
+		create_walls();
 		enemies.create(100,500,'m_boar');
 		game.anims.create
 		({
@@ -193,6 +196,11 @@ var config = {
 			}
 
 		});
+	}
+	
+	//buat tembok//
+	function create_walls(){
+		walls.create(300,400,'wall');
 	}
 
 	function enemy_boar_move(){
@@ -241,7 +249,7 @@ var config = {
 			start_menu(this_create);
 		}
 		else if(game_state == "play"){
-			text_hp.setText("HP : " + player_hp + "| map = " + map);
+			text_hp.setText("HP : " + player_hp + " | map = " + map);
 
 			
 
@@ -492,11 +500,15 @@ var config = {
 	function EnemiesHitPlayer(player,enemy)
     {
 		//player.disableBody(true, true);
+		//jika hit reptile//
 		if(enemy.anims.currentAnim.frames[0].textureKey == "reptile"){
-			player_hp = player_hp - Phaser.Math.Between(1, 5);
-		}else{
-			player_hp = player_hp - Phaser.Math.Between(2, 3);
+			player_hp = player_hp - Phaser.Math.Between(1, 1);
 		}
+		//hit boar//
+		if(enemy.anims.currentAnim.frames[0].textureKey == "m_boar"){
+			player_hp = player_hp - Phaser.Math.Between(3, 3);
+		}
+		//player_hp = player_hp - Phaser.Math.Between(2, 3);
 		player_state = "hit";
 		enemy.disableBody(true, true);
 		if(player_hp < 1){
