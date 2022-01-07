@@ -133,12 +133,24 @@ var config = {
 
 		//  Collide the player and the wall
     	this_create.physics.add.collider(player, walls);
+		this_create.physics.add.collider(enemies, walls);
 
     	//this_create.physics.add.overlap(player, walls, PlayerHitWall, null, this_create);
 		this_create.physics.add.overlap(bombs, enemies, BombHitEnemies, null, this_create);
 		this_create.physics.add.overlap(player, enemies, EnemiesHitPlayer, null, this_create);
+		//this_create.physics.add.overlap(enemies, walls, EnemiesHitWalls, null, this_create);
 		//town_ashton_1_create(this_create);
 		
+	}
+	
+	
+	
+	function town_ashton_3_create(this_create){
+		//enemies = [];
+	}
+	
+	function dungeon_1_create(this_create){
+		//enemies = [];
 	}
 
 	function town_ashton_2_create(this_create){
@@ -160,6 +172,7 @@ var config = {
 		var enemy_reptile = enemies.create(500, 100, 'm_boar');
 		create_walls();
 		enemies.create(100,500,'m_boar');
+		this_create.physics.add.collider(enemies, walls);
 		game.anims.create
 		({
 			key: 'play_boar',
@@ -229,6 +242,17 @@ var config = {
 
 		});
 	}
+	
+	function EnemiesHitWalls(){
+		//console.log(enemies.x);
+		enemies.children.iterate(function (child) {
+			
+			if(child.x == walls.x){
+				console.log(enemies.x);
+			}
+			
+		});
+	}
 
     function update ()
     {
@@ -244,7 +268,7 @@ var config = {
 		}else{
 			this_update = this;
 		}
-
+		
 		if(game_state == "start_menu"){
 			start_menu(this_create);
 		}
@@ -268,12 +292,14 @@ var config = {
 				
 			}
 				//pindah map//
+				EnemiesHitWalls(this_create);
 				if(map == "town_ashton_1")
 				{
 					
 					// text = game.add.text(0, 0, "town ashton 1",style);
 					// text.anchor.set(0.5);
 					enemy_boar_move(this_create);
+					
 					if(player.x > 800)
 					{
 						town_ashton_1.destroy();
@@ -307,6 +333,39 @@ var config = {
 						map = "town_ashton_1";
 						town_ashton_1 = this.add.image(400, 300, 'sky');
 						town_ashton_1_create(this_create);
+					}
+					if(player.y < -1)
+					{
+						town_ashton_2.destroy();
+						clearEnemies();
+						player.y = 480;
+						map = "town_ashton_3";
+						town_ashton_3 = this.add.image(400, 300, 'sky');
+						town_ashton_3_create(this_create);
+					}
+					//dungeon_1//
+					if(player.x > 800)
+					{
+						town_ashton_2.destroy();
+						clearEnemies();
+						player.x = 0;
+						map = "dungeon_1";
+						dungeon_1 = this.add.image(400, 300, 'sky');
+						dungeon_1_create(this_create);
+					}
+					//generate_enemie_boar();
+					
+				}
+				else if(map == "town_ashton_3")
+				{
+					if(player.y > 480)
+					{
+						town_ashton_3.destroy();
+						clearEnemies();
+						player.y = 0;
+						map = "town_ashton_2";
+						town_ashton_2 = this.add.image(400, 300, 'town_ashton_2');
+						town_ashton_2_create(this_create);
 					}
 					//generate_enemie_boar();
 					
