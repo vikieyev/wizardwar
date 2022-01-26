@@ -369,8 +369,17 @@ var config = {
 					}
 					//generate_enemie_boar();
 					
-				}
-				else if(map == "game_over"){
+				}else if(map == "dungeon_1"){
+					if(player.x < -1)
+					{
+						town_ashton_2.destroy();
+						clearEnemies();
+						player.x = 800;
+						map = "town_ashton_2";
+						town_ashton_2 = this.add.image(400, 300, 'town_ashton_2');
+						town_ashton_2_create(this_create);
+					}
+				}else if(map == "game_over"){
 					
 					
 				}else{
