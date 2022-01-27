@@ -1,24 +1,24 @@
 var config = {
-        //type: Phaser.CANVAS,
-        type: Phaser.AUTO,
-        width: 800,
-        height: 480,
-        physics: {
-        default: 'arcade',
-        arcade: {
-           // gravity: { y: 0 },
-            debug: false
-        }
-    },
-        scene: {
-            preload: preload,
-            create: create,
-            update: update
-        }
-    };
+		//type: Phaser.CANVAS,
+		type: Phaser.AUTO,
+		width: 800,
+		height: 480,
+		physics: {
+		default: 'arcade',
+		arcade: {
+		   // gravity: { y: 0 },
+			debug: false
+		}
+	},
+		scene: {
+			preload: preload,
+			create: create,
+			update: update
+		}
+	};
 
 	// ini variable //
-    var game = new Phaser.Game(config);
+	var game = new Phaser.Game(config);
 	var wizard;
 	var cursors ;
 	var keys ;
@@ -27,8 +27,7 @@ var config = {
 	var fire = false;
 	var enemies;
 	var enemy;
-	var town_ashton_1;
-	var town_ashton_2;
+	
 	var text;
 	var sprite;
 	var style;
@@ -46,37 +45,46 @@ var config = {
 	var accel = 10;
 	var top_speed = 180;
 
+	var scale_sprite = 0.25;
+
+	//map
+	var start_map = "dungeon_1";
+	var town_ashton_1;
+	var town_ashton_2;
+	var dungeon_1;
+	var dungeon_2;
+
 	//preload
-    function preload ()
-    {
-        this.load.image('sky', 'assets/sky.png');
+	function preload ()
+	{
+		this.load.image('sky', 'assets/sky.png');
 		this.load.image('town_ashton_2', 'assets/town_a1.png');
-        this.load.image('bomb', 'assets/bomb.png');
-        this.load.spritesheet('dude', 'assets/dude.png', { frameWidth: 32, frameHeight: 48 });
-        this.load.spritesheet('wizard', 'assets/wizard-161x106.png', { frameWidth: 161, frameHeight: 106 });
+		this.load.image('bomb', 'assets/bomb.png');
+		this.load.spritesheet('dude', 'assets/dude.png', { frameWidth: 32, frameHeight: 48 });
+		this.load.spritesheet('wizard', 'assets/wizard-161x106.png', { frameWidth: 161, frameHeight: 106 });
 		this.load.spritesheet('m_boar', 'assets/m_boar-239x178.png', { frameWidth: 239, frameHeight: 178 });
 		this.load.spritesheet('reptile', 'assets/monster/reptile/sprite-sheet- 248x151.png', { frameWidth: 248, frameHeight: 151 });
 		this.load.image('wall', 'assets/platform.png');
-    }
+	}
 
-    function create()
-    {
+	function create()
+	{
 		if(this_create){
 
 		}else{
 			this_create = this;
 		}
 		
-        // town_ashton_1 = this_create.add.image(400, 300, 'sky');
+		// town_ashton_1 = this_create.add.image(400, 300, 'sky');
 		// //town_ashton_2 = this.add.image(400, 300, 'town_ashton_2');
-        // player = this_create.physics.add.sprite(200,300,'wizard');
+		// player = this_create.physics.add.sprite(200,300,'wizard');
 		// player.setScale(0.25);
-        //player.setCollideWorldBounds(true);
-        cursors = this_create.input.keyboard.createCursorKeys();
-        keys = this_create.input.keyboard.addKeys('Z');
+		//player.setCollideWorldBounds(true);
+		cursors = this_create.input.keyboard.createCursorKeys();
+		keys = this_create.input.keyboard.addKeys('Z');
 		key_enter = this_create.input.keyboard.addKeys('ENTER');
 		key_space = this_create.input.keyboard.addKeys('SPACE');
-        
+		
 		// bombs = this_create.physics.add.group();
 		// enemies = this_create.physics.add.group();
 		// // style = { font: "12px Arial", fill: "#ff0044", wordWrap: true, align: "center", backgroundColor: "#ffff00" };
@@ -87,14 +95,14 @@ var config = {
 		// this_create.physics.add.overlap(player, enemies, EnemiesHitPlayer, null, this_create);
 		player_hp = 10;
 		
-    }
-    
-    var fire_time = 0;
-    var facingUp = false;
-    var facingDown = false;
-    var facingLeft = false;
-    var facingRight = false;
-    var enemySpawn = 0;
+	}
+	
+	var fire_time = 0;
+	var facingUp = false;
+	var facingDown = false;
+	var facingLeft = false;
+	var facingRight = false;
+	var enemySpawn = 0;
 	var map = "";
 	var this_update;
 	var player_state;
@@ -104,12 +112,13 @@ var config = {
 		var style = { font: "32px Arial", fill: "#ff0044", wordWrap: true, align: "center", backgroundColor: "#ffff00" };
 		this_create.add.text(game.config.width/4,game.config.height/2,"PRESS ENTER TO START",style);
 		game_state = "";
+		
 	}
 
 	function begining(this_create){
 		
 
-		town_ashton_1 = this_create.add.image(400, 300, 'sky');
+		//town_ashton_1 = this_create.add.image(400, 300, 'sky');
 		//wall = this_create.physics.add.staticGroup();
 		//town_ashton_2 = this.add.image(400, 300, 'town_ashton_2');
 		//wall.create(300, 400, 'wall');
@@ -117,28 +126,28 @@ var config = {
 		//walls = this_create.physics.add.group();
 		//walls.create(300,400,'wall');
 		
-        player = this_create.physics.add.sprite(200,300,'wizard');
+		player = this_create.physics.add.sprite(200,300,'wizard');
 		player.setScale(0.25);
-        //player.setCollideWorldBounds(true);
+		//player.setCollideWorldBounds(true);
 		bombs = this_create.physics.add.group();
 		enemies = this_create.physics.add.group();
-		
+		enemies.enableBody = true;
 
 		
 		//walls.create(300,400,'wall');
 
 		style = { font: "12px Arial", fill: "#ff0044", wordWrap: true, align: "center", backgroundColor: "#ffff00" };
 		// text = this_create.add.text(player.x,player.y,map,style);
-		text_hp = this_create.add.text(50,50,player_hp + " " + map ,style);
+		text_hp = this_create.add.text(10,10,player_hp + " " + map ,style);
 
 		//  Collide the player and the wall
-    	this_create.physics.add.collider(player, walls);
+		this_create.physics.add.collider(player, walls);
 		this_create.physics.add.collider(enemies, walls);
 
-    	//this_create.physics.add.overlap(player, walls, PlayerHitWall, null, this_create);
+		//this_create.physics.add.overlap(player, walls, PlayerHitWall, null, this_create);
 		this_create.physics.add.overlap(bombs, enemies, BombHitEnemies, null, this_create);
 		this_create.physics.add.overlap(player, enemies, EnemiesHitPlayer, null, this_create);
-		//this_create.physics.add.overlap(enemies, walls, EnemiesHitWalls, null, this_create);
+		this_create.physics.add.overlap(enemies, walls, EnemiesHitWalls, null, this_create);
 		//town_ashton_1_create(this_create);
 		
 	}
@@ -152,11 +161,25 @@ var config = {
 	function dungeon_1_create(this_create){
 		//enemies = [];
 	}
+	function dungeon_2_create(this_create){
+		//enemies = [];
+		var enemy_reptile = enemies.create(500, 100, 'm_boar');
+		create_walls();
+		enemies.create(100,500,'m_boar');
+		this_create.physics.add.collider(enemies, walls);
+		game.anims.create
+		({
+			key: 'play_boar',
+			frames: game.anims.generateFrameNumbers('m_boar', { start: 0, end: 34 }),
+			frameRate: 10,
+			repeat: -1
+		});
+	}
 
 	function town_ashton_2_create(this_create){
 		//enemies = [];
 		var enemy_reptile = enemies.create(500, 100, 'reptile'); 
-		enemies.create(100,500,'reptile');
+		enemies.create(500,300,'reptile');
 		game.anims.create
 		({
 			key: 'play_reptile',
@@ -186,82 +209,60 @@ var config = {
 	function enemy_reptile_move(){
 		enemies.children.iterate(function (child) {
 			//  Give each star a slightly different bounce
-			child.setScale(0.25);
+			child.setScale(scale_sprite);
 			child.anims.play('play_reptile', true);
 			child.setBounceY(Phaser.Math.FloatBetween(0.4, 0.8));
-			
-			if(child.x < player.x){
-				child.x += 1 ;
-			}else if(child.x > player.x){
-				child.x -= 1 ;
+			// jika player mendekat musuh mengejar//
+			rangex = 100;
+			//console.log(Math.abs(child.x - player.x))
+			proxx = Math.abs(child.x - player.x)
+			proxy = Math.abs(child.y - player.y)
+			if(proxx < rangex && proxy < rangex){
+				//kejar player//
+				kejar_player(child);
 			}
-			else{
-				
-			}
-
-			if(child.y < player.y){
-				child.y += 1 ;
-			}else if(child.y > player.y){
-				child.y -= 1;
-			}
-			else{
-				//child.setVelocity(0,0);
-			}
-
 		});
+	}
+
+	function kejar_player(child){
+		if(child.x < player.x){
+			child.x += 1 ;
+		}else if(child.x > player.x){
+			child.x -= 1 ;
+		}
+		else{
+			
+		}
+
+		if(child.y < player.y){
+			child.y += 1 ;
+		}else if(child.y > player.y){
+			child.y -= 1;
+		}
+		else{
+			//child.setVelocity(0,0);
+		}
 	}
 	
 	//buat tembok//
 	function create_walls(){
-		walls.create(300,400,'wall');
+		//walls.create(300,400,'wall');
 	}
 
 	function enemy_boar_move(){
 		enemies.children.iterate(function (child) {
 			//  Give each star a slightly different bounce
-			child.setScale(0.25);
+			child.setScale(scale_sprite);
 			child.anims.play('play_boar', true);
 			child.setBounceY(Phaser.Math.FloatBetween(0.4, 0.8));
-			if(child.x < player.x){
-				child.x += 1 ;
-			}else if(child.x > player.x){
-				child.x -= 1 ;
-			}
-			else{
-				
-			}
-
-			if(child.y < player.y){
-				child.y += 1 ;
-			}else if(child.y > player.y){
-				child.y -= 1;
-			}
-			else{
-				//child.setVelocity(0,0);
-			}
+			kejar_player(child);
 
 		});
 	}
 	
-	function EnemiesHitWalls(){
-		//console.log(enemies.x);
-		enemies.children.iterate(function (child) {
-			
-			if(child.x == walls.x){
-				console.log(enemies.x);
-			}
-			
-		});
-	}
+	
 
-    function update ()
-    {
-		// text.x = player.x;
-		// text.y = player.y;
-		// text.setText("");
-		
-		
-		
+	function update (){	
 		///map change//
 		if(this_update){
 
@@ -275,8 +276,6 @@ var config = {
 		else if(game_state == "play"){
 			text_hp.setText("HP : " + player_hp + " | map = " + map);
 
-			
-
 			if (player_state == "hit"){
 				aplha_timer += 1;
 				player.alpha = 0.1 * Phaser.Math.Between(1, 5);
@@ -286,13 +285,13 @@ var config = {
 					player_state = "";
 					player.alpha = 1;
 					aplha_timer = 0;
-					player.setScale(0.25);
+					player.setScale(scale_sprite);
 				}
 				
 				
 			}
 				//pindah map//
-				EnemiesHitWalls(this_create);
+				//EnemiesHitWalls(this_create);
 				if(map == "town_ashton_1")
 				{
 					
@@ -353,6 +352,8 @@ var config = {
 						dungeon_1 = this.add.image(400, 300, 'sky');
 						dungeon_1_create(this_create);
 					}
+					
+
 					//generate_enemie_boar();
 					
 				}
@@ -379,6 +380,17 @@ var config = {
 						town_ashton_2 = this.add.image(400, 300, 'town_ashton_2');
 						town_ashton_2_create(this_create);
 					}
+					if(player.x > 800)
+					{
+						dungeon_1 != null ? dungeon_1.destroy() : dungeon_1 = null;
+						clearEnemies();
+						player.x = 0;
+						map = "dungeon_2";
+						dungeon_2 = this.add.image(400, 300, 'sky');
+						dungeon_2_create(this_create);
+					}
+				}else if(map == "dungeon_2"){
+					enemy_boar_move(this_create);					
 				}else if(map == "game_over"){
 					
 					
@@ -457,7 +469,7 @@ var config = {
 			if(keys.Z.isDown)
 			{
 				fire_time++
-				if(fire_time > 60)
+				if(fire_time > 30)
 				{
 					fire = true;
 					fire_time=0;
@@ -532,25 +544,26 @@ var config = {
 				this_update.children.removeAll();
 				begining(this_create);
 				game_state = "play";
-				map = "town_ashton_1";
+				//map = "town_ashton_1";
+				map = start_map;
 			}
 		}
 			
 		
-    }
+	}
 
-    function clear_town_ashton_1(){
+	function clear_town_ashton_1(){
 
-    }
-    
-    function BombHitEnemies(bomb,enemy)
-    {
+	}
+	
+	function BombHitEnemies(bomb,enemy)
+	{
 		bomb.disableBody(true, true);
 		enemy.disableBody(true, true);
 	}
 
 	function PlayerHitWall(player,walls)
-    {
+	{
 		console.log("hit wall");
 		player_hp = 99;
 		
@@ -558,15 +571,15 @@ var config = {
 
 	function clearWalls(){
 		walls.children.iterate(function (child) 
-        {
+		{
 
 			child.disableBody(true, true);
 		
-        });
+		});
 	}
 
 	function EnemiesHitPlayer(player,enemy)
-    {
+	{
 		//player.disableBody(true, true);
 		//jika hit reptile//
 		if(enemy.anims.currentAnim.frames[0].textureKey == "reptile"){
@@ -579,9 +592,22 @@ var config = {
 		//player_hp = player_hp - Phaser.Math.Between(2, 3);
 		player_state = "hit";
 		enemy.disableBody(true, true);
+		console.log("player_state = " + player_state);
 		if(player_hp < 1){
 			game_over();
 		}
+	}
+
+	function EnemiesHitWalls(enemy,wall){
+		console.log("enemy hit walls");
+		enemy.setVelocity(0,0);
+		// enemies.children.iterate(function (child) {
+		// 	//console.log("enemix = " + child.x);
+		// 	if(child.x == walls.x){
+		// 		console.log(enemies.x);
+		// 	}
+			
+		// });
 	}
 
 	function game_over(){
@@ -598,8 +624,8 @@ var config = {
 		if(enemySpawn % 100 == 0)
 		{
 				var enemy = enemies.create(Phaser.Math.Between(0, 800), -10, 'reptile');
-			    enemy.setVelocity(Phaser.Math.Between(-200, 200),Phaser.Math.Between(50, 200));
-				enemy.setScale(0.25);
+				enemy.setVelocity(Phaser.Math.Between(-200, 200),Phaser.Math.Between(50, 200));
+				enemy.setScale(scale_sprite);
 				game.anims.create
 				({
 					key: 'play_reptile',
@@ -618,8 +644,8 @@ var config = {
 		if(enemySpawn % 100 == 0)
 		{
 				var enemy = enemies.create(Phaser.Math.Between(0, 800), -10, 'm_boar');
-			    enemy.setVelocity(Phaser.Math.Between(-200, 200),Phaser.Math.Between(50, 200));
-				enemy.setScale(0.25);
+				enemy.setVelocity(Phaser.Math.Between(-200, 200),Phaser.Math.Between(50, 200));
+				enemy.setScale(scale_sprite);
 				game.anims.create
 				({
 					key: 'play_boar',
@@ -635,11 +661,11 @@ var config = {
 	function clearEnemies()
 	{
 		enemies.children.iterate(function (child) 
-        {
+		{
 
 			child.disableBody(true, true);
 		
-        });
+		});
 	
 	}
 	
