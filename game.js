@@ -384,6 +384,7 @@ var config = {
 						map = "town_ashton_2";
 						town_ashton_2 = this.add.image(400, 300, 'town_ashton_2');
 						town_ashton_2_create(this_create);
+						dungeon_1.destroy();
 					}
 					if(player.x > 800)
 					{
@@ -393,9 +394,24 @@ var config = {
 						map = "dungeon_2";
 						dungeon_2 = this.add.image(400, 300, 'sky');
 						dungeon_2_create(this_create);
+						dungeon_1.destroy();
 					}
 				}else if(map == "dungeon_2"){
+					if(!dungeon_2){
+						dungeon_2 = this.add.image(400, 300, 'sky');
+						dungeon_2_create(this_create);
+					}
 					enemy_boar_move(this_create);
+					if(player.x < -1)
+					{
+						dungeon_1 != null ? dungeon_1.destroy() : dungeon_1 = null;
+						clearEnemies();
+						player.x = 800;
+						map = "dungeon_1";
+						dungeon_1 = this.add.image(400, 300, 'sky');
+						dungeon_1_create(this_create);
+						dungeon_2.destroy();
+					}
 					
 				}else if(map == "game_over"){
 					
