@@ -60,8 +60,10 @@ var config = {
 		this.load.image('sky', 'assets/sky.png');
 		this.load.image('town_ashton_2', 'assets/town_a1.png');
 		this.load.image('bomb', 'assets/bomb.png');
-		this.load.spritesheet('dude', 'assets/dude.png', { frameWidth: 32, frameHeight: 48 });
-		this.load.spritesheet('wizard', 'assets/wizard-161x106.png', { frameWidth: 161, frameHeight: 106 });
+		//this.load.spritesheet('dude', 'assets/dude.png', { frameWidth: 32, frameHeight: 48 });
+		this.load.spritesheet('wizard', 'assets/hero_diam.png', { frameWidth: 18, frameHeight: 21 });
+		this.load.spritesheet('wizard_side', 'assets/3_side.png', { frameWidth: 16, frameHeight: 22 });
+		//this.load.spritesheet('wizard', 'assets/wizard-161x106.png', { frameWidth: 161, frameHeight: 106 });
 		this.load.spritesheet('m_boar', 'assets/m_boar-239x178.png', { frameWidth: 239, frameHeight: 178 });
 		this.load.spritesheet('reptile', 'assets/monster/reptile/sprite-sheet- 248x151.png', { frameWidth: 248, frameHeight: 151 });
 		this.load.image('wall', 'assets/platform.png');
@@ -127,7 +129,7 @@ var config = {
 		//walls.create(300,400,'wall');
 		
 		player = this_create.physics.add.sprite(200,300,'wizard');
-		player.setScale(0.25);
+		//player.setScale(0.25);
 		//player.setCollideWorldBounds(true);
 		bombs = this_create.physics.add.group();
 		enemies = this_create.physics.add.group();
@@ -149,6 +151,23 @@ var config = {
 		this_create.physics.add.overlap(player, enemies, EnemiesHitPlayer, null, this_create);
 		this_create.physics.add.overlap(enemies, walls, EnemiesHitWalls, null, this_create);
 		//town_ashton_1_create(this_create);
+
+		game.anims.create
+		({
+			key: 'play_hero_side',
+			frames: game.anims.generateFrameNumbers('wizard_side', { start: 0, end: 3 }),
+			frameRate: 10,
+			repeat: 1
+		});
+
+		// game.anims.create
+		// ({
+		// 	key: 'play_hero_side_left',
+		// 	frames: game.anims.generateFrameNumbers('wizard_side', { start: 0, end: 3 }),
+		// 	frameRate: 10,
+		// 	repeat: 1,
+		// 	scaleX: -1
+		// });
 		
 	}
 	
@@ -223,6 +242,25 @@ var config = {
 				kejar_player(child);
 			}
 		});
+	}
+
+	function hero_side_move(){
+		child.anims.play('wizard_side', true);
+		// enemies.children.iterate(function (child) {
+		// 	//  Give each star a slightly different bounce
+		// 	//child.setScale(scale_sprite);
+			
+		// 	child.setBounceY(Phaser.Math.FloatBetween(0.4, 0.8));
+		// 	// jika player mendekat musuh mengejar//
+		// 	rangex = 100;
+		// 	//console.log(Math.abs(child.x - player.x))
+		// 	proxx = Math.abs(child.x - player.x)
+		// 	proxy = Math.abs(child.y - player.y)
+		// 	if(proxx < rangex && proxy < rangex){
+		// 		//kejar player//
+		// 		kejar_player(child);
+		// 	}
+		// });
 	}
 
 	function kejar_player(child){
@@ -372,6 +410,7 @@ var config = {
 					//generate_enemie_boar();
 					
 				}else if(map == "dungeon_1"){
+					
 					if(!dungeon_1){
 						dungeon_1 = this.add.image(400, 300, 'sky');
 						dungeon_1_create(this_create);
@@ -393,7 +432,7 @@ var config = {
 						player.x = 0;
 						map = "dungeon_2";
 						dungeon_2 = this.add.image(400, 300, 'sky');
-						dungeon_2_create(this_create);
+						//dungeon_2_create(this_create);
 						dungeon_1.destroy();
 					}
 				}else if(map == "dungeon_2"){
@@ -401,7 +440,7 @@ var config = {
 						dungeon_2 = this.add.image(400, 300, 'sky');
 						dungeon_2_create(this_create);
 					}
-					enemy_boar_move(this_create);
+					//enemy_boar_move(this_create);
 					if(player.x < -1)
 					{
 						dungeon_1 != null ? dungeon_1.destroy() : dungeon_1 = null;
@@ -412,7 +451,8 @@ var config = {
 						dungeon_1_create(this_create);
 						dungeon_2.destroy();
 					}
-					
+					generate_enemie_boar();
+					generate_enemie_lizard();
 				}else if(map == "game_over"){
 					
 					
@@ -437,7 +477,10 @@ var config = {
 				facingRight = false;
 				facingUp = false;
 				facingDown =false;
-				
+				//player.setScaleX = -1;
+				//player.anims.play('play_hero_side',true);
+				player.anims.play('play_hero_side',true);
+				player.setScale(-1,1);
 			}
 			else if (cursors.right.isDown)
 			{
@@ -450,6 +493,9 @@ var config = {
 				facingRight = true;
 				facingUp = false;
 				facingDown =false;
+				player.anims.play('play_hero_side',true);
+				player.setScale(1,1);
+				
 
 			}
 			else if (cursors.up.isDown)
@@ -497,7 +543,6 @@ var config = {
 					fire_time=0;
 				}
 			}
-			
 			
 			if(fire == true)
 			{
@@ -641,7 +686,7 @@ var config = {
 	}
 
 	function generate_enemie_lizard(){
-		console.log("spawn lizard");
+		//console.log("spawn lizard");
 		enemySpawn = Phaser.Math.Between(0, 800);
 		if(enemySpawn % 100 == 0)
 		{
@@ -661,7 +706,7 @@ var config = {
 	}
 
 	function generate_enemie_boar(){
-		console.log("spawn boar");
+		//console.log("spawn boar");
 		enemySpawn = Phaser.Math.Between(0, 800);
 		if(enemySpawn % 100 == 0)
 		{
