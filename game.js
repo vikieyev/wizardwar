@@ -46,9 +46,10 @@ var config = {
 	var top_speed = 180;
 
 	var scale_sprite = 0.25;
+	var player_scale_sprite = 0.35;
 
 	//map
-	var start_map = "dungeon_1";
+	var start_map = "town_ashton_1";
 	var town_ashton_1;
 	var town_ashton_2;
 	var dungeon_1;
@@ -61,9 +62,11 @@ var config = {
 		this.load.image('town_ashton_2', 'assets/town_a1.png');
 		this.load.image('bomb', 'assets/bomb.png');
 		//this.load.spritesheet('dude', 'assets/dude.png', { frameWidth: 32, frameHeight: 48 });
-		this.load.spritesheet('wizard', 'assets/hero_diam.png', { frameWidth: 18, frameHeight: 21 });
+		//this.load.spritesheet('wizard', 'assets/hero_diam.png', { frameWidth: 18, frameHeight: 21 });
 		this.load.spritesheet('wizard_side', 'assets/3_side.png', { frameWidth: 16, frameHeight: 22 });
 		//this.load.spritesheet('wizard', 'assets/wizard-161x106.png', { frameWidth: 161, frameHeight: 106 });
+		this.load.spritesheet('wizard', 'assets/wizard Pack/Run231x190.png', { frameWidth: 231, frameHeight: 190 });
+		this.load.spritesheet('wizard_idle', 'assets/wizard Pack/Idle.png', { frameWidth: 231, frameHeight: 190 });
 		this.load.spritesheet('m_boar', 'assets/m_boar-239x178.png', { frameWidth: 239, frameHeight: 178 });
 		this.load.spritesheet('reptile', 'assets/monster/reptile/sprite-sheet- 248x151.png', { frameWidth: 248, frameHeight: 151 });
 		this.load.image('wall', 'assets/platform.png');
@@ -128,8 +131,9 @@ var config = {
 		//walls = this_create.physics.add.group();
 		//walls.create(300,400,'wall');
 		
-		player = this_create.physics.add.sprite(200,300,'wizard');
-		//player.setScale(0.25);
+		player = this_create.physics.add.sprite(200,300,'wizard_idle');
+		player.setScale(player_scale_sprite);
+		//player.flipX =true;
 		//player.setCollideWorldBounds(true);
 		bombs = this_create.physics.add.group();
 		enemies = this_create.physics.add.group();
@@ -153,11 +157,25 @@ var config = {
 		//town_ashton_1_create(this_create);
 
 		game.anims.create
-		({
-			key: 'play_hero_side',
-			frames: game.anims.generateFrameNumbers('wizard_side', { start: 0, end: 3 }),
-			frameRate: 10,
-			repeat: 1
+		(
+			
+			{
+				key: 'play_hero_side',
+				frames: game.anims.generateFrameNumbers('wizard', { start: 0, end: 8 }),
+				frameRate: 10,
+				repeat: 1
+			}
+			
+			
+		);
+
+		game.anims.create({
+			
+				key: 'wizard_idle_play',
+				frames: game.anims.generateFrameNumbers('wizard_idle', { start: 0, end: 6 }),
+				frameRate: 10,
+				repeat: 1
+			
 		});
 
 		// game.anims.create
@@ -212,10 +230,11 @@ var config = {
 
 	function town_ashton_1_create(this_create){
 		//enemies = [];
-		var enemy_reptile = enemies.create(500, 100, 'm_boar');
-		create_walls();
-		enemies.create(100,500,'m_boar');
-		this_create.physics.add.collider(enemies, walls);
+		var enemy_boar = enemies.create(500, 100, 'm_boar');
+		//create_walls();
+		//enemies.create(100,500,'m_boar');
+		//this_create.physics.add.collider(enemies, walls);
+		
 		game.anims.create
 		({
 			key: 'play_boar',
@@ -223,6 +242,8 @@ var config = {
 			frameRate: 10,
 			repeat: -1
 		});
+
+		
 	
 	}
 
@@ -245,7 +266,7 @@ var config = {
 	}
 
 	function hero_side_move(){
-		child.anims.play('wizard_side', true);
+		child.anims.play('wizard', true);
 		// enemies.children.iterate(function (child) {
 		// 	//  Give each star a slightly different bounce
 		// 	//child.setScale(scale_sprite);
@@ -313,6 +334,7 @@ var config = {
 			start_menu(this_create);
 		}
 		else if(game_state == "play"){
+			
 			text_hp.setText("HP : " + player_hp + " | map = " + map);
 
 			if (player_state == "hit"){
@@ -324,7 +346,7 @@ var config = {
 					player_state = "";
 					player.alpha = 1;
 					aplha_timer = 0;
-					player.setScale(scale_sprite);
+					player.setScale(player_scale_sprite);
 				}
 				
 				
@@ -337,6 +359,10 @@ var config = {
 					// text = game.add.text(0, 0, "town ashton 1",style);
 					// text.anchor.set(0.5);
 					enemy_boar_move(this_create);
+					if(!town_ashton_1){
+						town_ashton_1 = this.add.image(400, 300, 'sky');
+						town_ashton_1_create(this_create);
+					}
 					
 					if(player.x > 800)
 					{
@@ -362,6 +388,10 @@ var config = {
 				}
 				else if(map == "town_ashton_2")
 				{
+					if(!town_ashton_2){
+						town_ashton_2 = this.add.image(400, 300, 'sky');
+						town_ashton_2_create(this_create);
+					}
 					enemy_reptile_move(this_create);
 					if(player.x < -1)
 					{
@@ -478,9 +508,10 @@ var config = {
 				facingUp = false;
 				facingDown =false;
 				//player.setScaleX = -1;
-				//player.anims.play('play_hero_side',true);
 				player.anims.play('play_hero_side',true);
-				player.setScale(-1,1);
+				//player.setScale(-1,1);
+				player.setScale(player_scale_sprite);
+				player.flipX =true;
 			}
 			else if (cursors.right.isDown)
 			{
@@ -494,7 +525,9 @@ var config = {
 				facingUp = false;
 				facingDown =false;
 				player.anims.play('play_hero_side',true);
-				player.setScale(1,1);
+				//player.setScale(1,1);
+				player.setScale(player_scale_sprite);
+				player.flipX =false;
 				
 
 			}
@@ -509,6 +542,9 @@ var config = {
 				facingRight = false;
 				facingUp = true;
 				facingDown = false;
+				player.anims.play('play_hero_side',true);
+				player.setScale(player_scale_sprite);
+				//player.flipX =true;
 			}
 			else if (cursors.down.isDown)
 			{
@@ -522,6 +558,9 @@ var config = {
 				facingRight = false;
 				facingUp = false;
 				facingDown =true;
+				player.anims.play('play_hero_side',true);
+				player.setScale(player_scale_sprite);
+				//player.flipX =true;
 			}
 			else
 			{
@@ -529,7 +568,7 @@ var config = {
 				//reset_speed();
 				player.setVelocityY(0);
 				player.setVelocityX(0);
-				
+				player.anims.play('wizard_idle_play',true);
 				speedy = 0;
 				speedx = 0;
 			}
